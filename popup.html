@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Copy-n-Paste Settings</title>
+    <style>
+      body {
+        width: 350px;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 10px;
+        background-color: #f8f9fa;
+      }
+      h1 {
+        font-size: 16px;
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #333;
+        text-align: center;
+      }
+      .section {
+        margin-bottom: 10px;
+        background-color: #ffffff;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+      .section h2 {
+        font-size: 14px;
+        margin-top: 0;
+        margin-bottom: 8px;
+        color: #007bff;
+      }
+      .setting {
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+      .setting label {
+        display: block;
+        margin-bottom: 3px;
+        font-weight: bold;
+      }
+      select,
+      input[type="checkbox"] {
+        margin-right: 5px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 13px;
+        width: 100%;
+        margin-top: 10px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      p {
+        font-size: 13px;
+        color: #555;
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Copy-n-Paste Settings</h1>
+
+    <div class="section">
+      <h2>Display Settings</h2>
+      <div class="setting">
+        <label for="previewToggle">Enable Image Previews:</label>
+        <input type="checkbox" id="previewToggle" checked />
+        <span style="font-size: 12px; color: #777">(Toggle to show/hide previews for image files)</span>
+      </div>
+      <div class="setting">
+        <label for="layoutSelect">Recent Files Layout:</label>
+        <select id="layoutSelect">
+          <option value="vertical">Vertical</option>
+          <option value="horizontal">Horizontal</option>
+        </select>
+      </div>
+      <button id="saveSettings">Save Settings</button>
+      <p id="saveStatus" style="margin-top: 10px"></p>
+    </div>
+
+    <div class="section">
+      <h2>About</h2>
+      <p>Version: 1.5.7</p>
+      <p>This extension simplifies uploading files from your clipboard and managing recent files.</p>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

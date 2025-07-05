@@ -1,215 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Copy-n-Paste</title>
     <style>
+      .cnp-overlay-content {
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans",
+          Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        font-size: medium;
+        position: absolute;
+        transform: translate(-50%, -50%);
+        background-color: rgba(240, 240, 240, 0.75);
+        backdrop-filter: blur(15px);
+        border: 1px solid #bebebe;
+        border-radius: 8px;
+        box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.35), 0 0 6px rgba(0, 0, 0, 0);
+        text-align: center;
+        color: #212529;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        line-height: 1.25;
+        z-index: 2147483647;
+      }
+
+      .cnp-hr {
+        width: 100%;
+        height: 0px;
+        margin: 7px 0;
+        color: inherit;
+        opacity: 0.25;
+        border: 0;
+        border-top: 0.5px solid;
+        padding: 0;
+      }
+
+      #cnp-drop-text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-weight: normal;
+        background-color: rgb(100, 100, 100);
+        color: white;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        border: 2px dashed #ffffff;
+        border-radius: 8px;
+        pointer-events: none;
+        box-sizing: border-box;
+        z-index: 1;
+      }
+      #cnp-drop-text svg {
+        margin-right: 7px;
+      }
+
+      .cnp-preview-badge {
+        display: none;
+        line-height: 0.85;
+        word-break: normal;
+        position: absolute;
+        top: 4%;
+        left: 98%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(240, 240, 240);
+        backdrop-filter: blur(15px);
+        border: 1px solid #bebebe;
+        color: #212529;
+        font-size: 1.1em;
+        font-weight: 400;
+        padding: 0.3em 0.5em;
+        text-align: center;
+        border-radius: 8px;
+      }
+
+      #cnp-preview-container {
+        width: 272px;
+        height: 153px;
+        margin-top: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      #cnp-preview-container:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        filter: brightness(0.9);
+      }
+
+      #cnp-image-preview {
+        position: relative;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+        border: 0;
+        margin: 0;
+      }
+
+      #cnp-image-title {
+        pointer-events: none;
+        font-size: 14px;
+        font-weight: normal;
+      }
+
+      #cnp-not-image {
+        font-weight: lighter;
+      }
+
+      #cnp-overlay-file-input {
+        display: none;
+      }
+
+      #cnp-upload {
+        font-weight: normal;
+        svg {
+          display: inline;
+        }
+      }
+
+      .cnp-menu-item {
+        cursor: default;
+        margin-bottom: 7px;
+        padding: 6px;
+      }
+      .cnp-menu-item:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+
+      .cnp-bi {
+        vertical-align: -0.125em;
+      }
+
+      .cnp-spinner {
+        display: block;
+        position: absolute;
+        border: 8px solid #e0e0e0;
+        border-radius: 100%;
+        border-top: 8px solid #00000000;
+        width: 60px;
+        height: 60px;
+        -webkit-animation: spin 0.85s linear infinite;
+        animation: spin 0.85s linear infinite;
+      }
+
+      @-webkit-keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
         .cnp-overlay-content {
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-            font-size: medium;
-            position: absolute;
-            transform: translate(-50%, -50%);
-            background-color: rgba(240, 240, 240, .75);
-            backdrop-filter: blur(15px);
-            border: 1px solid #bebebe;
-            border-radius: 8px;
-            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.35), 0 0 6px rgba(0, 0, 0, 0);
-            text-align: center;
-            color: #212529;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            line-height: 1.25;
-            z-index: 2147483647;
+          background-color: rgba(25, 25, 25, 0.85);
+          border: 1px solid #444449;
+          color: white;
+          backdrop-filter: blur(50px);
         }
 
-        .cnp-hr {
-            width: 100%;
-            height: 0px;
-            margin: 7px 0;
-            color: inherit;
-            opacity: .25;
-            border: 0;
-            border-top: .5px solid;
-            padding: 0;
-        }
-
-        #cnp-drop-text {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            font-weight: normal;
-            background-color: rgb(100, 100, 100);
-            color: white;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            border: 2px dashed #ffffff;
-            border-radius: 8px;
-            pointer-events: none;
-            box-sizing: border-box;
-            z-index: 1;
-        }
-        #cnp-drop-text svg {
-            margin-right: 7px;
-        }
-
-        .cnp-preview-badge {
-            display: none;
-            line-height: 0.85;
-            word-break: normal;
-            position: absolute;
-            top: 4%;
-            left: 98%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(240, 240, 240);
-            backdrop-filter: blur(15px);
-            border: 1px solid #bebebe;
-            color: #212529;
-            font-size: 1.1em;
-            font-weight: 400;
-            padding: 0.3em 0.5em;
-            text-align: center;
-            border-radius: 8px;
-        }
-
-        #cnp-preview-container {
-            width: 272px;
-            height: 153px;
-            margin-top: 7px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
         #cnp-preview-container:hover {
-            background-color: rgba(0, 0, 0, .1);
-            filter: brightness(.9);
+          background-color: rgba(255, 255, 255, 0.1);
+          filter: brightness(0.9);
         }
 
-        #cnp-image-preview {
-            position: relative;
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-            border: 0;
-            margin: 0;
-        }
-
-        #cnp-image-title {
-            pointer-events: none;
-            font-size: 14px;
-            font-weight: normal;
-        }
-
-        #cnp-not-image{
-            font-weight: lighter;
-        }
-
-        #cnp-overlay-file-input {
-            display: none;
-        }
-
-        #cnp-upload {
-            font-weight: normal;
-            svg {
-                display: inline;
-            }
-        }
-
-        .cnp-menu-item {
-            cursor: default;
-            margin-bottom: 7px;
-            padding: 6px;
-        }
         .cnp-menu-item:hover {
-            background-color: rgba(0, 0, 0, .1);
-        }
-        
-        .cnp-bi {
-            vertical-align: -.125em;
+          background-color: rgba(255, 255, 255, 0.1);
         }
 
         .cnp-spinner {
-            display: block;
-            position: absolute;
-            border: 8px solid #e0e0e0;
-            border-radius: 100%;
-            border-top: 8px solid #00000000;
-            width: 60px;
-            height: 60px;
-            -webkit-animation: spin .85s linear infinite;
-            animation: spin .85s linear infinite;
-        }
-        
-        @-webkit-keyframes spin {
-            0% { -webkit-transform: rotate(0deg); }
-            100% { -webkit-transform: rotate(360deg); }
+          border-color: #505050;
+          border-top-color: #00000000;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .cnp-preview-badge {
+          background-color: rgb(57 57 57);
+          backdrop-filter: blur(50px);
+          border: 1px solid #444449;
+          color: white;
         }
-
-        @media (prefers-color-scheme: dark) {
-            .cnp-overlay-content {
-                background-color: rgba(25, 25, 25, .85);
-                border: 1px solid #444449;
-                color: white;
-                backdrop-filter: blur(50px);
-            }
-
-            #cnp-preview-container:hover {
-                background-color: rgba(255, 255, 255, .1);
-                filter: brightness(.9);
-            }
-
-            .cnp-menu-item:hover {
-                background-color: rgba(255, 255, 255, .1);
-            }
-
-            .cnp-spinner {
-                border-color: #505050;
-                border-top-color: #00000000;
-            }
-
-            .cnp-preview-badge {
-                background-color: rgb(57 57 57);
-                backdrop-filter: blur(50px);
-                border: 1px solid #444449;
-                color: white;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="cnp-overlay-content">
-        <span id="cnp-drop-text">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="cnp-bi bi-plus-lg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/></svg>
-            Drop files here
+      <span id="cnp-drop-text">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="cnp-bi bi-plus-lg"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"
+          />
+        </svg>
+        Drop files here
+      </span>
+
+      <!-- Image Container & Preview -->
+      <div id="cnp-preview-container"><div class="cnp-spinner"></div></div>
+      <span class="cnp-preview-badge">0</span>
+
+      <hr class="cnp-hr" />
+
+      <!-- + Upload Image -->
+      <input type="file" id="cnp-overlay-file-input" multiple />
+      <div id="cnp-upload-btn" class="cnp-menu-item">
+        <span id="cnp-upload">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="cnp-bi bi-plus-lg"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"
+            />
+          </svg>
+          <span id="cnp-upload-text">Upload File</span>
         </span>
-        
-        <!-- Image Container & Preview -->
-        <div id="cnp-preview-container"><div class="cnp-spinner"></div></div>
-        <span class="cnp-preview-badge">0</span>
+      </div>
 
-        <hr class="cnp-hr">
+      <hr class="cnp-hr" />
 
-        <!-- + Upload Image -->
-        <input type="file" id="cnp-overlay-file-input">
-        <div id="cnp-upload-btn" class="cnp-menu-item">
-            <span id="cnp-upload">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="cnp-bi bi-plus-lg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/></svg>
-                <span id="cnp-upload-text">Upload File</span>
-            </span>
+      <!-- Recent Files List -->
+      <div id="cnp-recent-files" class="cnp-menu-item" style="max-height: 150px; overflow-y: auto">
+        <span id="cnp-recent-files-title">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="cnp-bi bi-clock-history"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M8.515 1.019A7 7 0 0 0 8 1V0H7v1.019a7 7 0 0 0-3.9 12.219l-.707.707a1 1 0 0 0 1.414 1.414l.707-.707A7 7 0 0 0 15 8.5V7h-1v1.5a6 6 0 0 1-10.48 4.032l.48-.48A5.97 5.97 0 0 1 2 7.5a5.996 5.996 0 0 1 6-6 5.97 5.97 0 0 1 3.732 1.268l.48-.48A6.96 6.96 0 0 0 8.515 1.019zM10.5 5.5a.5.5 0 0 0-1 0v2.586l-1.293-1.293a.5.5 0 1 0-.707.707l2 2a.5.5 0 0 0 .707 0l2-2a.5.5 0 0 0-.707-.707L10.5 8.086V5.5z"
+            />
+          </svg>
+          Recent Files
+        </span>
+        <div
+          id="cnp-recent-files-list"
+          style="margin-top: 5px; display: block; overflow-y: auto; overflow-x: hidden; max-height: 150px"
+        >
+          <span id="cnp-no-recent-files" style="font-style: italic; color: gray">No recent files available</span>
         </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>
